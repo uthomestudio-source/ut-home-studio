@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'services/studio_storage.dart';
-import 'theme/app_theme.dart';
 import 'screens/main_shell.dart';
 import 'screens/erp_portal_screen.dart';
 
@@ -26,7 +25,10 @@ class UtHomeStudioApp extends StatelessWidget {
         return MaterialApp(
           title: 'UT HOME STUDIO',
           debugShowCheckedModeBanner: false,
-          theme: AppTheme.build(config),
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E3A8A)),
+            useMaterial3: true,
+          ),
           home: StreamBuilder<User?>(
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot) {
