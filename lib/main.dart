@@ -5,9 +5,7 @@ import 'services/studio_storage.dart';
 import 'screens/main_shell.dart';
 import 'screens/erp_portal_screen.dart';
 
-String? _startupError;
-
-const FirebaseOptions _firebaseOptions = FirebaseOptions(
+const FirebaseOptions _kFirebaseOptions = FirebaseOptions(
   apiKey: 'AIzaSyC8fVUoQMpIK4fYYYSVf8KIQ7J81C4AGqY',
   appId: '1:150587865934:android:57830a739cb3db6b7c3c1f',
   messagingSenderId: '150587865934',
@@ -15,23 +13,33 @@ const FirebaseOptions _firebaseOptions = FirebaseOptions(
   storageBucket: 'ut-home-erp.firebasestorage.app',
 );
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  String? startupError;
   try {
-    await Firebase.initializeApp(options: _firebaseOptions);
+    await Firebase.initializeApp(options: _kFirebaseOptions);
   } catch (e) {
-    _startupError = 'Firebase Error: $e';
+    startupError = 'Firebase initialization failed: $e';
   }
-  final config = StudioConfig();
+
+  final studioConfig = StudioConfig();
   try {
-    await config.load();
+    await studioConfig.load();
   } catch (_) {}
-  runApp(UtHomeStudioApp(config: config));
+
+  runApp(UtHomeStudioApp(config: studioConfig, startupError: startupError));
 }
 
 class UtHomeStudioApp extends StatelessWidget {
   final StudioConfig config;
-  const UtHomeStudioApp({super.key, required this.config});
+  final String? startupError;
+
+  const UtHomeStudioApp({
+    super.key,
+    required this.config,
+    this.startupError,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -45,48 +53,71 @@ class UtHomeStudioApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E3A8A)),
             useMaterial3: true,
           ),
-          home: _startupError != null
-              ? Scaffold(
-                  body: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Text(_startupError!, style: const TextStyle(color: Colors.red)),
-                    ),
-                  ),
-                )
-              : StreamBuilder<User?>(
-                  stream: FirebaseAuth.instance.authStateChanges(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-                    }
-                    if (!snapshot.hasData) {
-                      return const ErpLoginScreen();
-                    }
-                    return Builder(
-                      builder: (ctx) => Stack(
-                        children: [
-                          MainShell(config: config),
-                          Positioned(
-                            right: 16,
-                            bottom: 84,
-                            child: FloatingActionButton.extended(
-                              heroTag: 'erp_btn',
-                              onPressed: () => Navigator.push(
-                                ctx,
-                                MaterialPageRoute(builder: (_) => const SiteUpdatesSheet()),
-                              ),
-                              icon: const Icon(Icons.cloud_upload),
-                              label: const Text('Site ERP'),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+          home: startupError != null
+              ? _StartupErrorView(message: startupError!)
+              : _AuthGate(config: config),
         );
       },
+    );
+  }
+}
+
+class _AuthGate extends StatelessWidget {
+  final StudioConfig config;
+
+  const _AuthGate({required this.config});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (!snapshot.hasData) {
+          return const ErpLoginScreen();
+        }
+
+        return Scaffold(
+          body: MainShell(config: config),
+          floatingActionButton: FloatingActionButton.extended(
+            heroTag: 'erp_btn',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SiteUpdatesSheet()),
+              );
+            },
+            icon: const Icon(Icons.cloud_upload),
+            label: const Text('Site ERP'),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _StartupErrorView extends StatelessWidget {
+  final String message;
+
+  const _StartupErrorView({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(
+            message,
+            style: const TextStyle(color: Colors.red),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
     );
   }
 }
