@@ -4,7 +4,7 @@ workflows:
     max_build_duration: 30
     scripts:
       - name: Create Android platform files
-        script: flutter create --platforms=android --org com.uthome --project-name ut_home_studio .
+        script: flutter create --platforms=android --org com.uthome --project-name erp .
       - name: Configure Firebase Google Services
         script: |
           cp google-services.json android/app/google-services.json
