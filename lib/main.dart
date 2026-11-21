@@ -7,10 +7,18 @@ import 'screens/erp_portal_screen.dart';
 
 String? _startupError;
 
+const FirebaseOptions _firebaseOptions = FirebaseOptions(
+  apiKey: 'AIzaSyC8fVUoQMpIK4fYYYSVf8KIQ7J81C4AGqY',
+  appId: '1:150587865934:android:57830a739cb3db6b7c3c1f',
+  messagingSenderId: '150587865934',
+  projectId: 'ut-home-erp',
+  storageBucket: 'ut-home-erp.firebasestorage.app',
+);
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(options: _firebaseOptions);
   } catch (e) {
     _startupError = 'Firebase Error: $e';
   }
