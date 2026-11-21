@@ -4,7 +4,14 @@ workflows:
     max_build_duration: 30
     scripts:
       - name: Create Android platform files
-        script: flutter create --platforms=android .
+        script: flutter create --platforms=android --org com.uthome --project-name ut_home_studio .
+      - name: Configure Firebase Google Services
+        script: |
+          cp google-services.json android/app/google-services.json
+          sed -i 's/id "com.android.application"/id "com.android.application"\n    id "com.google.gms.google-services" version "4.4.2" apply false/' android/settings.gradle || true
+          sed -i 's/id("com.android.application")/id("com.android.application")\n    id("com.google.gms.google-services") version "4.4.2" apply false/' android/settings.gradle.kts || true
+          sed -i 's/id "com.android.application"/id "com.android.application"\n    id "com.google.gms.google-services"/' android/app/build.gradle || true
+          sed -i 's/id("com.android.application")/id("com.android.application")\n    id("com.google.gms.google-services")/' android/app/build.gradle.kts || true
       - name: Get Flutter packages
         script: flutter pub get
       - name: Build Android APK
