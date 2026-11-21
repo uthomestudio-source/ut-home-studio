@@ -1,5 +1,5 @@
 name: ut_home_studio
-description: Luxury Interior Design Android Application for UT HOME STUDIO.
+description: UT HOME STUDIO ERP
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -9,6 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.4
+  http: ^1.2.2
   google_fonts: ^6.2.1
   url_launcher: ^6.3.1
   shared_preferences: ^2.3.3
