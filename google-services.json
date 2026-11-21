@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "150587865934",
+    "project_id": "ut-home-erp",
+    "storage_bucket": "ut-home-erp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:150587865934:android:57830a739cb3db6b7c3c1f",
+        "android_client_info": {
+          "package_name": "com.uthome.erp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8fVUoQMpIK4fYYYSVfBKIQ7J8iC4AGqY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
